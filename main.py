@@ -1,3 +1,15 @@
+import smtplib
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+
+server = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
+
+login = os.getenv('login')
+password = os.getenv('password')
+
+
 text_mail = 'Привет, %friend_name%! %my_name% приглашает тебя на сайт %website%!\n\
 \n\
 %website% — это новая версия онлайн-курса по программированию.\n\
@@ -22,4 +34,22 @@ my_name = 'Nickolay'
 text_mail = text_mail.replace('%website%', site_url)
 text_mail = text_mail.replace('%friend_name%', friend_name)
 text_mail = text_mail.replace('%my_name%', my_name)
-print(text_mail)
+
+email_to = 'stefan001@yandex.ru'
+email_from = 'devmanorg@yandex.ru'
+
+
+letter ='From: {email_from}\n\
+To: {email_to}\n\
+Subject: Приглашение!\n\
+Content-Type: text/plain; charset="UTF-8";\n\
+\n\
+'.format(email_from = email_from, email_to = email_to ) + text_mail
+
+letter = letter.encode("UTF-8")
+
+server.login(login, password)
+
+server.sendmail(email_from, email_to, letter)
+
+server.quit()
